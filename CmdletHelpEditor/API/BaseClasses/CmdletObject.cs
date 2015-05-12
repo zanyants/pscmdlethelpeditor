@@ -99,6 +99,7 @@ namespace CmdletHelpEditor.API.BaseClasses {
 			get_parametersets(cmdlet);
 			get_parameters();
 			get_syntax(cmdlet);
+            get_outputtypes( cmdlet );
 			RelatedLinks = new ObservableCollection<RelatedLink>();
 			Examples = new ObservableCollection<Example>();
 			SupportInformation = new SupportInfo();
@@ -297,6 +298,17 @@ namespace CmdletHelpEditor.API.BaseClasses {
 				}
 			}
 		}
+        void get_outputtypes( PSObject cmdlet ) {
+            var outputTypeMember = cmdlet.Members[ "OutputType" ];
+            if ( outputTypeMember == null )
+                return;
+            var outputTypeNames = outputTypeMember.Value as IEnumerable<PSTypeName>;
+            if ( outputTypeNames == null )
+                return;
+            string joined = String.Join( ";", outputTypeNames.Select( tn => tn.Name ) );
+            GeneralHelp.ReturnType = joined;
+            GeneralHelp.OldReturnType = joined;
+        }
 		void get_syntax(PSObject cmdlet) {
 			Syntax = new List<String>();
 			String[] exclude = {
